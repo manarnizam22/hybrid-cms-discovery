@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cms-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "100m"
+    nginx.ingress.kubernetes.io/rate-limit: "3000"
+    nginx.ingress.kubernetes.io/rate-limit-window: "1s"
+spec:
+  tls:
+  - hosts:
+    - cms.yourdomain.com
+    secretName: cms-tls-secret
+  rules:
+  - host: cms.yourdomain.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: cms-service
+            port:
+              number: 80

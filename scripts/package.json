@@ -1,0 +1,8 @@
+{
+  "name": "cms-scripts",
+  "version": "1.0.0",
+  "description": "Database initialization scripts",
+  "scripts": {
+    "init-db": "psql $DATABASE_URL -f init-db-triggers.sql"
+  }
+}

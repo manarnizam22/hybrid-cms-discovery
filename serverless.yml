@@ -1,0 +1,122 @@
+service: hybrid-cms-discovery
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: ${opt:region, 'us-east-1'}
+  stage: ${opt:stage, 'dev'}
+  environment:
+    AWS_REGION: ${self:provider.region}
+    OPENSEARCH_ENDPOINT: ${env:OPENSEARCH_ENDPOINT}
+    OPENSEARCH_INDEX_NAME: ${env:OPENSEARCH_INDEX_NAME, 'cms_content'}
+    REDIS_HOST: ${env:REDIS_HOST}
+    REDIS_PORT: ${env:REDIS_PORT, '6379'}
+    REDIS_PASSWORD: ${env:REDIS_PASSWORD}
+    REDIS_DB: ${env:REDIS_DB, '0'}
+    DATABASE_URL: ${env:DATABASE_URL}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - opensearch:ESHttpGet
+            - opensearch:ESHttpPost
+            - opensearch:ESHttpPut
+            - opensearch:ESHttpDelete
+          Resource: '*'
+        - Effect: Allow
+          Action:
+            - sqs:ReceiveMessage
+            - sqs:DeleteMessage
+            - sqs:GetQueueAttributes
+          Resource: '*'
+        - Effect: Allow
+          Action:
+            - s3:GetObject
+            - s3:PutObject
+            - s3:DeleteObject
+          Resource: '*'
+  timeout: 30
+  memorySize: 512
+
+functions:
+  discoverySearch:
+    handler: lambda/discovery-search/index.handler
+    events:
+      - http:
+          path: discovery/search
+          method: get
+          cors: true
+    environment:
+      OPENSEARCH_ENDPOINT: ${env:OPENSEARCH_ENDPOINT}
+      OPENSEARCH_INDEX_NAME: ${env:OPENSEARCH_INDEX_NAME, 'cms_content'}
+      REDIS_HOST: ${env:REDIS_HOST}
+      REDIS_PORT: ${env:REDIS_PORT, '6379'}
+      REDIS_PASSWORD: ${env:REDIS_PASSWORD}
+      REDIS_DB: ${env:REDIS_DB, '0'}
+
+  discoveryFeatured:
+    handler: lambda/discovery-featured/index.handler
+    events:
+      - http:
+          path: discovery/featured
+          method: get
+          cors: true
+    environment:
+      OPENSEARCH_ENDPOINT: ${env:OPENSEARCH_ENDPOINT}
+      OPENSEARCH_INDEX_NAME: ${env:OPENSEARCH_INDEX_NAME, 'cms_content'}
+      REDIS_HOST: ${env:REDIS_HOST}
+      REDIS_PORT: ${env:REDIS_PORT, '6379'}
+      REDIS_PASSWORD: ${env:REDIS_PASSWORD}
+      REDIS_DB: ${env:REDIS_DB, '0'}
+
+  sqsProcessor:
+    handler: lambda/sqs-processor/index.handler
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - IndexingQueue
+              - Arn
+          batchSize: 10
+    timeout: 60
+    reservedConcurrentExecutions: 10
+
+resources:
+  Resources:
+    IndexingQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:service}-${self:provider.stage}-indexing-queue
+        VisibilityTimeout: 60
+        MessageRetentionPeriod: 1209600
+        ReceiveMessageWaitTimeSeconds: 20
+        RedrivePolicy:
+          deadLetterTargetArn:
+            Fn::GetAtt:
+              - IndexingDLQ
+              - Arn
+          maxReceiveCount: 3
+
+    IndexingDLQ:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:service}-${self:provider.stage}-indexing-dlq
+        MessageRetentionPeriod: 1209600
+
+plugins:
+  - serverless-esbuild
+  - serverless-offline
+
+custom:
+  esbuild:
+    bundle: true
+    minify: false
+    sourcemap: true
+    exclude:
+      - aws-sdk
+    target: node18
+    platform: node
+    concurrency: 10
