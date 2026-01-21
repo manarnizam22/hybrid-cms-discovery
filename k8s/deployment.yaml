@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: contentnexus
+  name: thmanyah-platform
   labels:
-    app: contentnexus
+    app: thmanyah-platform
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: contentnexus
+      app: thmanyah-platform
   template:
     metadata:
       labels:
-        app: contentnexus
+        app: thmanyah-platform
     spec:
       containers:
-      - name: contentnexus
-        image: contentnexus:latest
+      - name: thmanyah-platform
+        image: thmanyah-platform:latest
         ports:
         - containerPort: 3000
         env:
@@ -27,61 +27,61 @@ spec:
         - name: DB_HOST
           valueFrom:
             configMapKeyRef:
-              name: contentnexus-config
+              name: thmanyah-platform-config
               key: db-host
         - name: DB_PORT
           value: "5432"
         - name: DB_USERNAME
           valueFrom:
             secretKeyRef:
-              name: contentnexus-secrets
+              name: thmanyah-platform-secrets
               key: db-username
         - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: contentnexus-secrets
+              name: thmanyah-platform-secrets
               key: db-password
         - name: DB_NAME
           valueFrom:
             configMapKeyRef:
-              name: contentnexus-config
+              name: thmanyah-platform-config
               key: db-name
         - name: REDIS_HOST
           valueFrom:
             configMapKeyRef:
-              name: contentnexus-config
+              name: thmanyah-platform-config
               key: redis-host
         - name: REDIS_PORT
           value: "6379"
         - name: AWS_REGION
           valueFrom:
             configMapKeyRef:
-              name: contentnexus-config
+              name: thmanyah-platform-config
               key: aws-region
         - name: AWS_ACCESS_KEY_ID
           valueFrom:
             secretKeyRef:
-              name: contentnexus-secrets
+              name: thmanyah-platform-secrets
               key: aws-access-key-id
         - name: AWS_SECRET_ACCESS_KEY
           valueFrom:
             secretKeyRef:
-              name: contentnexus-secrets
+              name: thmanyah-platform-secrets
               key: aws-secret-access-key
         - name: AWS_S3_BUCKET_NAME
           valueFrom:
             configMapKeyRef:
-              name: contentnexus-config
+              name: thmanyah-platform-config
               key: s3-bucket-name
         - name: AWS_SQS_QUEUE_URL
           valueFrom:
             configMapKeyRef:
-              name: contentnexus-config
+              name: thmanyah-platform-config
               key: sqs-queue-url
         - name: OPENSEARCH_ENDPOINT
           valueFrom:
             configMapKeyRef:
-              name: contentnexus-config
+              name: thmanyah-platform-config
               key: opensearch-endpoint
         - name: OPENSEARCH_INDEX_NAME
           value: "cms_content"
@@ -108,10 +108,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: contentnexus-service
+  name: thmanyah-platform-service
 spec:
   selector:
-    app: contentnexus
+    app: thmanyah-platform
   ports:
   - protocol: TCP
     port: 80
@@ -121,7 +121,7 @@ spec:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: contentnexus-config
+  name: thmanyah-platform-config
 data:
   db-host: "postgres-service"
   db-name: "cms_db"
@@ -134,7 +134,7 @@ data:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: contentnexus-secrets
+  name: thmanyah-platform-secrets
 type: Opaque
 stringData:
   db-username: "postgres"

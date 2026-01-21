@@ -1,12 +1,12 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: contentnexus-hpa
+  name: thmanyah-platform-hpa
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: contentnexus
+    name: thmanyah-platform
   minReplicas: 3
   maxReplicas: 50
   metrics:

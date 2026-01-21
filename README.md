@@ -1,6 +1,6 @@
-# ContentNexus
+# Thmanyah Platform
 
-**ContentNexus** - A scalable hybrid Content Management and Discovery System capable of handling up to 10 million users per hour, combining on-premise infrastructure with AWS cloud services for optimal performance, security, and cost efficiency.
+**Thmanyah Platform** - A scalable hybrid Content Management and Discovery System capable of handling up to 10 million users per hour, combining on-premise infrastructure with AWS cloud services for optimal performance, security, and cost efficiency.
 
 ## Architecture Overview
 

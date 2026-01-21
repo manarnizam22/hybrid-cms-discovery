@@ -1,11 +1,11 @@
 version: '3.8'
 
 services:
-  contentnexus:
+  thmanyah-platform:
     build:
       context: .
       dockerfile: Dockerfile
-    image: contentnexus:latest
+    image: thmanyah-platform:latest
     ports:
       - "3000:3000"
     environment:
@@ -30,7 +30,7 @@ services:
       - postgres
       - redis
     networks:
-      - contentnexus-network
+      - thmanyah-network
 
   postgres:
     image: postgres:15-alpine
@@ -43,7 +43,7 @@ services:
     ports:
       - "5432:5432"
     networks:
-      - contentnexus-network
+      - thmanyah-network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
@@ -57,7 +57,7 @@ services:
     volumes:
       - redis_data:/data
     networks:
-      - contentnexus-network
+      - thmanyah-network
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -69,5 +69,5 @@ volumes:
   redis_data:
 
 networks:
-  contentnexus-network:
+  thmanyah-network:
     driver: bridge
