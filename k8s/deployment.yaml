@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: cms-app
+  name: contentnexus
   labels:
-    app: cms-app
+    app: contentnexus
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: cms-app
+      app: contentnexus
   template:
     metadata:
       labels:
-        app: cms-app
+        app: contentnexus
     spec:
       containers:
-      - name: cms-app
-        image: cms-app:latest
+      - name: contentnexus
+        image: contentnexus:latest
         ports:
         - containerPort: 3000
         env:
@@ -27,61 +27,61 @@ spec:
         - name: DB_HOST
           valueFrom:
             configMapKeyRef:
-              name: cms-config
+              name: contentnexus-config
               key: db-host
         - name: DB_PORT
           value: "5432"
         - name: DB_USERNAME
           valueFrom:
             secretKeyRef:
-              name: cms-secrets
+              name: contentnexus-secrets
               key: db-username
         - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: cms-secrets
+              name: contentnexus-secrets
               key: db-password
         - name: DB_NAME
           valueFrom:
             configMapKeyRef:
-              name: cms-config
+              name: contentnexus-config
               key: db-name
         - name: REDIS_HOST
           valueFrom:
             configMapKeyRef:
-              name: cms-config
+              name: contentnexus-config
               key: redis-host
         - name: REDIS_PORT
           value: "6379"
         - name: AWS_REGION
           valueFrom:
             configMapKeyRef:
-              name: cms-config
+              name: contentnexus-config
               key: aws-region
         - name: AWS_ACCESS_KEY_ID
           valueFrom:
             secretKeyRef:
-              name: cms-secrets
+              name: contentnexus-secrets
               key: aws-access-key-id
         - name: AWS_SECRET_ACCESS_KEY
           valueFrom:
             secretKeyRef:
-              name: cms-secrets
+              name: contentnexus-secrets
               key: aws-secret-access-key
         - name: AWS_S3_BUCKET_NAME
           valueFrom:
             configMapKeyRef:
-              name: cms-config
+              name: contentnexus-config
               key: s3-bucket-name
         - name: AWS_SQS_QUEUE_URL
           valueFrom:
             configMapKeyRef:
-              name: cms-config
+              name: contentnexus-config
               key: sqs-queue-url
         - name: OPENSEARCH_ENDPOINT
           valueFrom:
             configMapKeyRef:
-              name: cms-config
+              name: contentnexus-config
               key: opensearch-endpoint
         - name: OPENSEARCH_INDEX_NAME
           value: "cms_content"
@@ -108,10 +108,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: cms-service
+  name: contentnexus-service
 spec:
   selector:
-    app: cms-app
+    app: contentnexus
   ports:
   - protocol: TCP
     port: 80
@@ -121,7 +121,7 @@ spec:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: cms-config
+  name: contentnexus-config
 data:
   db-host: "postgres-service"
   db-name: "cms_db"
@@ -134,7 +134,7 @@ data:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: cms-secrets
+  name: contentnexus-secrets
 type: Opaque
 stringData:
   db-username: "postgres"

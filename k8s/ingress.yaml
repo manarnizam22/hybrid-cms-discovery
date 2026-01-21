@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: cms-ingress
+  name: contentnexus-ingress
   annotations:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
@@ -11,16 +11,16 @@ metadata:
 spec:
   tls:
   - hosts:
-    - cms.yourdomain.com
-    secretName: cms-tls-secret
+    - contentnexus.yourdomain.com
+    secretName: contentnexus-tls-secret
   rules:
-  - host: cms.yourdomain.com
+  - host: contentnexus.yourdomain.com
     http:
       paths:
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: cms-service
+            name: contentnexus-service
             port:
               number: 80

@@ -1,4 +1,4 @@
-service: hybrid-cms-discovery
+service: contentnexus
 
 frameworkVersion: '3'
 

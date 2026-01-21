@@ -1,7 +1,7 @@
 {
-  "name": "hybrid-cms-discovery",
+  "name": "contentnexus",
   "version": "1.0.0",
-  "description": "Scalable hybrid CMS and Discovery system",
+  "description": "ContentNexus - Scalable hybrid CMS and Discovery platform",
   "author": "",
   "private": true,
   "license": "UNLICENSED",

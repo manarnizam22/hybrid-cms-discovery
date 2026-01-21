@@ -22,17 +22,17 @@ spec:
         - name: POSTGRES_USER
           valueFrom:
             secretKeyRef:
-              name: cms-secrets
+              name: contentnexus-secrets
               key: db-username
         - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: cms-secrets
+              name: contentnexus-secrets
               key: db-password
         - name: POSTGRES_DB
           valueFrom:
             configMapKeyRef:
-              name: cms-config
+              name: contentnexus-config
               key: db-name
         volumeMounts:
         - name: postgres-storage
